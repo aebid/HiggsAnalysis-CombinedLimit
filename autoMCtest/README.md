@@ -1,5 +1,7 @@
 instructions to build the data card and run combine limits
 
-1. use extractlimits.py to readin shapes in root file and build the datacard 
+1. prep_for_combine.py - Creates folders, shapes files, datacards, and scripts to run the combine tools.
 
-2. use cmslimits.py to generate script to run combine tool and produce results
+2. Go into your outputfolder and run Run_all_condors or Run_all_scripts
+
+3. make_limits_plots.py
