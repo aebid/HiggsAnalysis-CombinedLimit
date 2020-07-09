@@ -152,16 +152,20 @@ class Datacards(object):
             raise RuntimeError, "Object %s in workspace %s in %s does not exist or it's neither a data nor a pdf" % (shapename, wsname, rootfile)
         return hist
 
-    def getEntriesFromShape(self, wsname, shapename, rootfile):
+    def getEntriesFromShape(self, wsname, shapename, rootfile, autoMC = False):
         rfile = ROOT.TFile(rootfile, "READ") ## read rate from histogram or workspace
-        wsp = rfile.Get( wsname )
-        hist = wsp.data(shapename)
-        if not hist: hist = wsp.pdf(shapename)
-        if not hist: hist = wsp.function(shapename)
-        if not hist:
-            raise RuntimeError, "Object %s in workspace %s in %s does not exist or it's neither a data nor a pdf" % (shapename, wsname, rootfile)
-        Entries = hist.sumEntries()
-        rfile.Close()
+        if autoMC:
+          hist = rfile.Get(shapename)
+          Entries = hist.Integral()
+        if not autoMC:
+          wsp = rfile.Get( wsname )
+          hist = wsp.data(shapename)
+          if not hist: hist = wsp.pdf(shapename)
+          if not hist: hist = wsp.function(shapename)
+          if not hist:
+              raise RuntimeError, "Object %s in workspace %s in %s does not exist or it's neither a data nor a pdf" % (shapename, wsname, rootfile)
+          Entries = hist.sumEntries()
+          rfile.Close()
         return Entries
 
 
@@ -179,8 +183,10 @@ class Datacards(object):
         wsname = "{channel}_M{mass}".format(channel = channel, mass = mass)
         #datacardfile.write("shapes * * %s w:$PROCESS_$CHANNEL_pdf w:$PROCESS_$SYSTEMATIC_pdf\n"%(wsname))
         rootfile_local = rootfile.split("/")[-1]
-        if autoMC: datacardfile.write("shapes * * {rootfile} $PROCESS $PROCESS_$SYSTEMATIC\n".format(rootfile = rootfile_local))
-        else: datacardfile.write("shapes * * {rootfile} {wsname}:$PROCESS {wsname}:$PROCESS_$SYSTEMATIC\n".format(rootfile = rootfile_local, wsname = wsname))
+        if autoMC: 
+          datacardfile.write("shapes * * {rootfile} $PROCESS $PROCESS_$SYSTEMATIC\n".format(rootfile = rootfile_local))
+        else: 
+          datacardfile.write("shapes * * {rootfile} {wsname}:$PROCESS {wsname}:$PROCESS_$SYSTEMATIC\n".format(rootfile = rootfile_local, wsname = wsname))
 
 
         datacardfile.write("#-----------------------------------------------------------------------------\n")## comment out
@@ -189,7 +195,7 @@ class Datacards(object):
         if addobservation:
             datacardfile.write("observation\t\t")
             oname = "data_obs"
-            rate = self.getEntriesFromShape(wsname, oname, rootfile)
+            rate = self.getEntriesFromShape(wsname, oname, rootfile, autoMC)
 	    datacardfile.write("{rate}\t".format(rate = rate))
             datacardfile.write("\n")
         else:
@@ -199,7 +205,7 @@ class Datacards(object):
         ratelineheads = ["bin","process","process","rate"]
         for iline,head in enumerate(ratelineheads):
             datacardfile.write("%-50s" % (head))
-            for j, process in enumerate(self.channels_processes[channel]): 
+            for j, process in enumerate(self.channels_processes[channel]):
                 if iline == 0:
                     datacardfile.write("%-20s" % (wsname))
                 elif iline == 1:
@@ -211,7 +217,7 @@ class Datacards(object):
                         datacardfile.write("%-20d"% (0))
                 elif iline == 3:
                     oname = "{process}".format(process = process, channel = channel)
-                    rate = self.getEntriesFromShape(wsname, oname, rootfile)
+                    rate = self.getEntriesFromShape(wsname, oname, rootfile, autoMC)
                     datacardfile.write("%-20.3f"%(rate))
             datacardfile.write("\n")
         datacardfile.write("#-----------------------------------------------------------------------------\n")## comment out
@@ -241,7 +247,8 @@ class Datacards(object):
             datacardfile.write("\n")
 
    
-        datacardfile.write("* autoMCStats 0 \n") 
+        if autoMC: 
+          datacardfile.write("* autoMCStats 0 \n") 
         datacardfile.close()
 
 
@@ -262,8 +269,10 @@ class Datacards(object):
             rootfile_local = rootfile.split("/")[-1]
             wsname = "{channel}_M{mass}".format(channel = channel, mass = mass)
             #datacardfile.write("shapes * * %s w:$PROCESS_$CHANNEL_pdf w:$PROCESS_$SYSTEMATIC_pdf\n"%(wsname))
-            if autoMC: datacardfile.write("shapes * {channel} {rootfile} $PROCESS $PROCESS_$SYSTEMATIC\n".format(rootfile = rootfile_local, wsname = wsname, channel = channel))
-            else: datacardfile.write("shapes * {channel} {rootfile} {wsname}:$PROCESS {wsname}:$PROCESS_$SYSTEMATIC\n".format(rootfile = rootfile_local, wsname = wsname, channel = channel))
+            if autoMC: 
+              datacardfile.write("shapes * {channel} {rootfile} $PROCESS $PROCESS_$SYSTEMATIC\n".format(rootfile = rootfile_local, wsname = wsname, channel = channel))
+            else: 
+              datacardfile.write("shapes * {channel} {rootfile} {wsname}:$PROCESS {wsname}:$PROCESS_$SYSTEMATIC\n".format(rootfile = rootfile_local, wsname = wsname, channel = channel))
 
         datacardfile.write("#-----------------------------------------------------------------------------\n")## comment out
         
@@ -281,7 +290,7 @@ class Datacards(object):
                 oname = "data_obs"
                 #hist = self.readShapefromWorkspace( wsp, oname, wsname, rootfile)
                 #rate = hist.sumEntries()
-                rate = self.getEntriesFromShape(wsname, oname, rootfile)
+                rate = self.getEntriesFromShape(wsname, oname, rootfile, autoMC)
                 datacardfile.write("\t{rate}\t".format(rate = rate))
             datacardfile.write("\n")
         else:
@@ -305,7 +314,7 @@ class Datacards(object):
                         datacardfile.write("%-20d"%(self.processes.index(process)) )
                     elif iline == 3:
                         oname = "{process}".format(process = process, channel = channel)
-                        rate = self.getEntriesFromShape(wsname, oname, rootfile)
+                        rate = self.getEntriesFromShape(wsname, oname, rootfile, autoMC)
                         datacardfile.write("%-20.3f"%(rate))
             datacardfile.write("\n")
         datacardfile.write("#-----------------------------------------------------------------------------\n")## comment out
@@ -332,7 +341,8 @@ class Datacards(object):
             datacardfile.write("\n")
 
 
-        datacardfile.write("* autoMCStats 0 \n")    
+        if autoMC: 
+          datacardfile.write("* autoMCStats 0 \n")    
         datacardfile.close()
 
 
