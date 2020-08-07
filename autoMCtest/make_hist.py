@@ -10,14 +10,14 @@ colorlist = [800-4, 820-3, 900-3, 860-3, 616-7, 432+2, 400+2]
 
 HMElist = [250.0, 287, 330, 379, 435, 500, 575, 661, 760, 873, 1003, 1200.0]
 masslist = [260, 270, 300, 350, 400, 450, 500, 550, 600, 650, 750, 800, 900]
-masslist = [400]
+masslist = [550]
 
 fitlist = ["MTonly", "MTandMT2", "MTandMT2_MJJ"]
 
 dimensions = 2
 
-indir = "/afs/cern.ch/user/d/daebi/public/diHiggs/CMSSW_8_1_0/src/HiggsAnalysis-CombinedLimit/autoMCtest/2D_HMEv4_1p15_dnn_0p04/linear"
-outdir = "/afs/cern.ch/user/d/daebi/public/diHiggs/CMSSW_8_1_0/src/HiggsAnalysis-CombinedLimit/autoMCtest/2D_HMEv4_1p15_dnn_0p04/linear"
+indir = '/afs/cern.ch/user/d/daebi/public/diHiggs/CMSSW_8_1_0/src/HiggsAnalysis-CombinedLimit/autoMCtest/2D_HMEv4_1p15_dnn_0p1/linear'
+outdir = '/afs/cern.ch/user/d/daebi/public/diHiggs/CMSSW_8_1_0/src/HiggsAnalysis-CombinedLimit/autoMCtest/2D_HMEv4_1p15_dnn_0p1/linear'
 
 os.system("mkdir -p {outdir}/plots/".format(outdir = outdir))
 for fit in fitlist:

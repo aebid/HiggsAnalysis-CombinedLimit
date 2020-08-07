@@ -250,7 +250,11 @@ def makeLimitsPlots(masslist, workdir, plotsuffix=""):
     channels =   ["ElEl","MuEl","MuMu", "ElEl_MuEl_MuMu"]
     chnames = ["ElEl","MuEl","MuMu", "all channels"]
 
+    channels = ["ElEl", "MuEl", "MuMu"]
+    chnames = ["ElEl", "MuEl", "MuMu"]
+
     out_prefix = "autoMC_true"
+    out_prefix = "har_test"
     #out_prefix = "autoMC_false"
     scriptsuffix = "linear"
     alllimits = {}
@@ -300,9 +304,7 @@ def makeLimitsPlots(masslist, workdir, plotsuffix=""):
 
 masslist = [260, 270, 300, 350, 400, 450, 500, 550, 600, 650, 750, 800, 900]
 pwd = '/afs/cern.ch/user/d/daebi/public/diHiggs/CMSSW_8_1_0/src/HiggsAnalysis-CombinedLimit/autoMCtest/1D_binsize_0p04/output_autoMC_true/'
-pwd = '/afs/cern.ch/user/d/daebi/public/diHiggs/CMSSW_8_1_0/src/HiggsAnalysis-CombinedLimit/autoMCtest/1D_binsize_0p04/output_autoMC_false/'
-pwd = '/afs/cern.ch/user/d/daebi/public/diHiggs/CMSSW_8_1_0/src/HiggsAnalysis-CombinedLimit/autoMCtest/2D_HMEv4_1p15_dnn_0p04/output_autoMC_false/'
-pwd = '/afs/cern.ch/user/d/daebi/public/diHiggs/CMSSW_8_1_0/src/HiggsAnalysis-CombinedLimit/autoMCtest/2D_HMEv4_1p15_dnn_0p04/output_autoMC_true/'
+pwd = '/afs/cern.ch/user/d/daebi/public/diHiggs/CMSSW_8_1_0/src/HiggsAnalysis-CombinedLimit/autoMCtest/Harvester_test/'
 proclist = ["MTonly", "MTandMT2", "MTandMT2_MJJ"]
 for proc in proclist:
   makeLimitsPlots(masslist, pwd+proc+"/", "")

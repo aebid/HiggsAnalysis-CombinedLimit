@@ -9,11 +9,12 @@ trainlist =	["MTonly", "MTandMT2", "MTandMT2_MJJ"]
 processlist = 	["TTbar","SingleTop","Drell_Yan","data_untagged","TTbar_untagged","SingleTop_untagged", "ttV","VV","Signal"]
 statslist =     ["CMS_eff_b_heavy","CMS_eff_b_light","CMS_pu", "CMS_pdf", "CMS_eff_trigger","CMS_eff_e","CMS_eff_mu","CMS_iso_mu","QCDscale"]
 
-autoMC = True
-indir = "/afs/cern.ch/user/d/daebi/public/diHiggs/CMSSW_8_1_0/src/HiggsAnalysis-CombinedLimit/autoMCtest/2D_HMEv4_1p15_dnn_0p04/linear/"
-out_folder = "/afs/cern.ch/user/d/daebi/public/diHiggs/CMSSW_8_1_0/src/HiggsAnalysis-CombinedLimit/autoMCtest/2D_HMEv4_1p15_dnn_0p04/output_autoMC_true"
+autoMC = False
+indir = "/afs/cern.ch/user/d/daebi/public/diHiggs/CMSSW_8_1_0/src/HiggsAnalysis-CombinedLimit/autoMCtest/1D_binsize_0p04/HHbbWW_20200401_NNoutput_MjjCR_NNcutstudy1D/"
+indir = "/afs/cern.ch/user/d/daebi/public/diHiggs/CMSSW_8_1_0/src/HiggsAnalysis-CombinedLimit/autoMCtest/2D_HMEv4_1p15_dnn_0p1/linear/"
+out_folder = "/afs/cern.ch/user/d/daebi/public/diHiggs/CMSSW_8_1_0/src/HiggsAnalysis-CombinedLimit/autoMCtest/2D_HMEv4_1p15_dnn_0p1/fitdiagnostics_autoMC_true"
 
-out_prefix = "autoMC_true"  ##Outfile names are {prefix}_{channel}_M{mass}_shapes.root
+out_prefix = "autoMC_false"  ##Outfile names are {prefix}_{channel}_M{mass}_shapes.root
 
 
 os.system("mkdir -p {out_folder}".format(out_folder = out_folder))
@@ -21,6 +22,7 @@ os.system("mkdir -p "+out_folder+"/condor")
 os.system("mkdir -p "+out_folder+"/condor/output")
 os.system("mkdir -p "+out_folder+"/condor/error")
 os.system("mkdir -p "+out_folder+"/condor/log")
+
 
 for train in trainlist:
   os.system("mkdir -p {out_folder}/{tr}".format(out_folder = out_folder, tr = train))
@@ -94,6 +96,8 @@ for train in trainlist:
 
     datacard.generateDatacard_multichannels(outfile_all, channels_rootfile, channellist, mass, True, autoMC)
 
+
+
 channellist = ["ElEl", "MuEl", "MuMu", "ElEl_MuEl_MuMu"]
 
 fname_all = out_folder+"/Run_all_scripts.sh"
@@ -127,7 +131,8 @@ for train in trainlist:
       script.write("echo 'finished text2workspace, starting combine' \n")
       script.write("date \n\n")
       script.write("#Run limit\n\n")
-      script.write("combine -M AsymptoticLimits -t -1 -m {m} -n {ch}_M{m} {out_prefix}_{ch}_M{m}_combine_workspace.root &> {out_prefix}_{ch}_M{m}.log\n".format(m = mass, ch = channel, out_prefix = out_prefix))
+      script.write("combine -M FitDiagnostics -m {m} {out_prefix}_{ch}_M{m}_combine_workspace.root &> {out_prefix}_{ch}_M{m}.log\n".format(m = mass, ch = channel, out_prefix = out_prefix))
+      #script.write("combine -M AsymptoticLimits -t -1 -m {m} -n {ch}_M{m} {out_prefix}_{ch}_M{m}_combine_workspace.root &> {out_prefix}_{ch}_M{m}.log\n".format(m = mass, ch = channel, out_prefix = out_prefix))
       script.write("popd\n")
       script.write("echo 'finish channel {ch}'\n".format(ch = channel))
       script.write("date \n\n")
